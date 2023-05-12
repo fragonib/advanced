@@ -1,4 +1,5 @@
 defmodule My do
+  
   def if_no_macro(condition, clauses) do
     do_clause = Keyword.get(clauses, :do, nil)
     else_clause = Keyword.get(clauses, :else, nil)
@@ -47,7 +48,6 @@ defmodule My do
 
   end
 
-  @spec macro(any) :: any
   defmacro macro(code) do
     IO.inspect(quote do: unquote(code))
   end
