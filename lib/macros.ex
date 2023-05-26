@@ -70,45 +70,32 @@ defmodule Macros do
     explainf(do_clause)
   end
 
-
-  def explainf({:/, _, [{_, _, _} = left, {_, _, _} = right]}) do
-    "#{explainf(left)}, #{explainf(right)}, then #{explainop(:/)} them"
-  end
-  def explainf({:/, _, [{_, _, _} = left, right]}) do
-    "#{explainf(left)}, then #{explainop(:/)} it by #{explainf(right)}"
-  end
-  def explainf({:/, _, [left, {_, _, _} = right]}) do
-    "#{explainf(right)}, then #{explainop(:/)} #{explainf(left)} by it"
-  end
-  def explainf({:/, _, [left, right]}) do
-    "#{explainop(:/)} #{explainf(left)} by #{explainf(right)}"
-  end
-
-  def explainf({:-, _, [{_, _, _} = left, {_, _, _} = right]}) do
-    "#{explainf(left)}, #{explainf(right)}, then #{explainop(:-)} them"
-  end
-  def explainf({:-, _, [{_, _, _} = left, right]}) do
-    "#{explainf(left)}, then #{explainop(:-)} #{explainf(right)} from it"
-  end
-  def explainf({:-, _, [left, {_, _, _} = right]}) do
-    "#{explainf(right)}, then #{explainop(:-)} it from #{explainf(left)}"
-  end
-  def explainf({:-, _, [left, right]}) do
-    "#{explainop(:-)} #{explainf(right)} from #{explainf(left)}"
-  end
-
-
   def explainf({operator, _, [{_, _, _} = left, {_, _, _} = right]}) do
     "#{explainf(left)}, #{explainf(right)}, then #{explainop(operator)} them"
   end
   def explainf({operator, _, [{_, _, _} = left, right]}) do
-    "#{explainf(left)}, then #{explainop(operator)} #{explainf(right)}"
+    case operator do
+      :+ -> "#{explainf(left)}, then #{explainop(operator)} #{explainf(right)}"
+      :- -> "#{explainf(left)}, then #{explainop(:-)} #{explainf(right)} from it"
+      :* -> "#{explainf(left)}, then #{explainop(operator)} #{explainf(right)}"
+      :/ -> "#{explainf(left)}, then #{explainop(:/)} it by #{explainf(right)}"
+    end
   end
   def explainf({operator, _, [left, {_, _, _} = right]}) do
-    "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)}"
+    case operator do
+      :+ -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)}"
+      :- -> "#{explainf(right)}, then #{explainop(operator)} it from #{explainf(left)}"
+      :* -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)}"
+      :/ -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)} by it"
+    end
   end
   def explainf({operator, _, [left, right]}) do
-    "#{explainop(operator)} #{explainf(left)} and #{explainf(right)}"
+    case operator do
+      :+ -> "#{explainop(operator)} #{explainf(left)} and #{explainf(right)}"
+      :- -> "#{explainop(operator)} #{explainf(right)} from #{explainf(left)}"
+      :* -> "#{explainop(operator)} #{explainf(left)} and #{explainf(right)}"
+      :/ -> "#{explainop(operator)} #{explainf(left)} by #{explainf(right)}"
+    end
   end
 
   def explainop(operator) do
