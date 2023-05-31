@@ -67,41 +67,41 @@ defmodule Macros do
 
   defmacro explain(clause) do
     do_clause = Keyword.get(clause, :do, nil)
-    explainf(do_clause)
+    explain_ast(do_clause)
   end
 
-  def explainf({operator, _, [{_, _, _} = left, {_, _, _} = right]}) do
-    "#{explainf(left)}, #{explainf(right)}, then #{explainop(operator)} them"
+  def explain_ast({operator, _, [{_, _, _} = left, {_, _, _} = right]}) do
+    "#{explain_ast(left)}, #{explain_ast(right)}, then #{explain_op(operator)} them"
   end
-  def explainf({operator, _, [{_, _, _} = left, right]}) do
+  def explain_ast({operator, _, [{_, _, _} = left, right]}) do
     case operator do
-      :+ -> "#{explainf(left)}, then #{explainop(operator)} #{explainf(right)}"
-      :- -> "#{explainf(left)}, then #{explainop(:-)} #{explainf(right)} from it"
-      :* -> "#{explainf(left)}, then #{explainop(operator)} #{explainf(right)}"
-      :/ -> "#{explainf(left)}, then #{explainop(:/)} it by #{explainf(right)}"
+      :+ -> "#{explain_ast(left)}, then #{explain_op(operator)} #{explain_ast(right)}"
+      :- -> "#{explain_ast(left)}, then #{explain_op(operator)} #{explain_ast(right)} from it"
+      :* -> "#{explain_ast(left)}, then #{explain_op(operator)} #{explain_ast(right)}"
+      :/ -> "#{explain_ast(left)}, then #{explain_op(operator)} it by #{explain_ast(right)}"
     end
   end
-  def explainf({operator, _, [left, {_, _, _} = right]}) do
+  def explain_ast({operator, _, [left, {_, _, _} = right]}) do
     case operator do
-      :+ -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)}"
-      :- -> "#{explainf(right)}, then #{explainop(operator)} it from #{explainf(left)}"
-      :* -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)}"
-      :/ -> "#{explainf(right)}, then #{explainop(operator)} #{explainf(left)} by it"
+      :+ -> "#{explain_ast(right)}, then #{explain_op(operator)} #{explain_ast(left)}"
+      :- -> "#{explain_ast(right)}, then #{explain_op(operator)} it from #{explain_ast(left)}"
+      :* -> "#{explain_ast(right)}, then #{explain_op(operator)} #{explain_ast(left)}"
+      :/ -> "#{explain_ast(right)}, then #{explain_op(operator)} #{explain_ast(left)} by it"
     end
   end
-  def explainf({operator, _, [left, right]}) do
+  def explain_ast({operator, _, [left, right]}) do
     case operator do
-      :+ -> "#{explainop(operator)} #{explainf(left)} and #{explainf(right)}"
-      :- -> "#{explainop(operator)} #{explainf(right)} from #{explainf(left)}"
-      :* -> "#{explainop(operator)} #{explainf(left)} and #{explainf(right)}"
-      :/ -> "#{explainop(operator)} #{explainf(left)} by #{explainf(right)}"
+      :+ -> "#{explain_op(operator)} #{explain_ast(left)} and #{explain_ast(right)}"
+      :- -> "#{explain_op(operator)} #{explain_ast(right)} from #{explain_ast(left)}"
+      :* -> "#{explain_op(operator)} #{explain_ast(left)} and #{explain_ast(right)}"
+      :/ -> "#{explain_op(operator)} #{explain_ast(left)} by #{explain_ast(right)}"
     end
   end
-  def explainf(number) do
+  def explain_ast(number) do
     inspect(number)
   end
 
-  def explainop(operator) do
+  def explain_op(operator) do
     case operator do
       :+ -> "add"
       :- -> "subtract"
