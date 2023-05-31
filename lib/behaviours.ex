@@ -1,9 +1,16 @@
 defmodule Tracer do
-  defmacro def_t({:when, _, [{name, _, args}, _condition]} = definition, do: body) do
+  defmacro __using__(_opts) do
+    quote do
+      import Kernel, except: [def: 2]
+      import unquote(__MODULE__), only: [def: 2]
+    end
+  end
+
+  defmacro def({:when, _, [{name, _, args}, _condition]} = definition, do: body) do
     build_trace_do(definition, name, args, body)
   end
 
-  defmacro def_t({name, _, args} = definition, do: body) do
+  defmacro def({name, _, args} = definition, do: body) do
     build_trace_do(definition, name, args, body)
   end
 
