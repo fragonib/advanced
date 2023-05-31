@@ -97,6 +97,9 @@ defmodule Macros do
       :/ -> "#{explainop(operator)} #{explainf(left)} by #{explainf(right)}"
     end
   end
+  def explainf(number) do
+    inspect(number)
+  end
 
   def explainop(operator) do
     case operator do
@@ -105,10 +108,6 @@ defmodule Macros do
       :* -> "multiply"
       :/ -> "divide"
     end
-  end
-
-  def explainf(number) do
-    inspect(number)
   end
 
 end
