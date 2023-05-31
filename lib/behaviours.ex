@@ -1,23 +1,23 @@
 defmodule Tracer do
 
-  defmacro def({:when, _ , [{name, _, args} = definition, condition]}, do: content) do
+  defmacro deft({:when, _ , [{name, _, args} = definition, condition]}, do: content) do
     quote do
       Kernel.def unquote(definition) when unquote(condition) do
-        IO.puts("==> call: #{Tracer.dump_defn(unquote(name), unquote(args))}")
+        IO.puts("[Macro Tracer] ==> call: #{Tracer.dump_defn(unquote(name), unquote(args))}")
         result = unquote(content)
-        IO.puts("<== result: #{result}")
+        IO.puts("[Macro Tracer] <== result: #{result}")
         result
       end
     end
   end
 
-  defmacro def({name, _, args} = definition, do: content) do
+  defmacro deft({name, _, args} = definition, do: content) do
     IO.inspect(definition)
     quote do
       Kernel.def unquote(definition) do
-        IO.puts("==> call: #{Tracer.dump_defn(unquote(name), unquote(args))}")
+        IO.puts("[Macro Tracer] ==> call: #{Tracer.dump_defn(unquote(name), unquote(args))}")
         result = unquote(content)
-        IO.puts("<== result: #{result}")
+        IO.puts("[Macro Tracer] <== result: #{result}")
         result
       end
     end
@@ -27,19 +27,8 @@ defmodule Tracer do
     args |> Enum.map(&inspect/1) |> Enum.join(", ")
   end
 
+  @spec dump_defn(any, any) :: <<_::16, _::_*8>>
   def dump_defn(name, args) do
     "#{name}(#{dump_args(args)})"
   end
-end
-
-defmodule Test do
-  import Kernel, except: [def: 2]
-  import Tracer, only: [def: 2]
-
-  def puts_sum_three(a, b, c) do
-    IO.inspect(a + b + c)
-  end
-
-  def add_list(list), do: Enum.reduce(list, 0, &(&1 + &2))
-
 end
