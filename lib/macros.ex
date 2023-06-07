@@ -73,6 +73,7 @@ defmodule Macros do
   def explain_ast({operator, _, [{_, _, _} = left, {_, _, _} = right]}) do
     "#{explain_ast(left)}, #{explain_ast(right)}, then #{explain_op(operator)} them"
   end
+
   def explain_ast({operator, _, [{_, _, _} = left, right]}) do
     case operator do
       :+ -> "#{explain_ast(left)}, then #{explain_op(operator)} #{explain_ast(right)}"
@@ -81,6 +82,7 @@ defmodule Macros do
       :/ -> "#{explain_ast(left)}, then #{explain_op(operator)} it by #{explain_ast(right)}"
     end
   end
+
   def explain_ast({operator, _, [left, {_, _, _} = right]}) do
     case operator do
       :+ -> "#{explain_ast(right)}, then #{explain_op(operator)} #{explain_ast(left)}"
@@ -89,6 +91,7 @@ defmodule Macros do
       :/ -> "#{explain_ast(right)}, then #{explain_op(operator)} #{explain_ast(left)} by it"
     end
   end
+
   def explain_ast({operator, _, [left, right]}) do
     case operator do
       :+ -> "#{explain_op(operator)} #{explain_ast(left)} and #{explain_ast(right)}"
@@ -97,6 +100,7 @@ defmodule Macros do
       :/ -> "#{explain_op(operator)} #{explain_ast(left)} by #{explain_ast(right)}"
     end
   end
+
   def explain_ast(number) do
     inspect(number)
   end
@@ -109,5 +113,4 @@ defmodule Macros do
       :/ -> "divide"
     end
   end
-
 end

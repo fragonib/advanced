@@ -1,5 +1,4 @@
 defmodule Bindings do
-
   # This macro given a name, defines a function with that name that return its name
   defmacro define(name) do
     quote do

@@ -10,7 +10,6 @@ defmodule BindingTest do
     assert Test.fred() == :fred
     assert Test.bert() == :bert
   end
-
 end
 
 defmodule Test do
