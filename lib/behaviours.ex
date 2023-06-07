@@ -29,7 +29,7 @@ defmodule Tracer do
     "#{name}(#{dump_args(args)})"
   end
 
-  defp dump_args(args) do
+  def dump_args(args) do
     args |> Enum.map(&inspect/1) |> Enum.join(", ")
   end
 end

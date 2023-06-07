@@ -1,4 +1,4 @@
-defmodule BehavipoursTest do
+defmodule TracerTest do
   use ExUnit.Case
   use Tracer
 
