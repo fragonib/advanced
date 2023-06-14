@@ -19,5 +19,4 @@ defmodule CaesarCypherTest do
     assert Word13.word13(["casa"]) == []
     assert Word13.word13(["casa", "pnfn", "perro"]) == ["casa", "pnfn"]
   end
-
 end
