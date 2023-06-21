@@ -1,18 +1,30 @@
 defimpl Inspect, for: Midi do
+  import Inspect.Algebra
+
   def inspect(%Midi{content: <<>>}, _opts) do
     "#Midi[«empty»]"
   end
 
-  def inspect(midi = %Midi{}, _opts) do
-    content =
-      Enum.map(midi, fn frame -> Kernel.inspect(frame) end)
-      |> Enum.join("\n")
+  def inspect(midi = %Midi{}, opts) do
+    open = color("#Midi[", :map, opts)
+    close = color("]", :map, opts)
+    separator = color(",", :map, opts)
 
-    "#Midi[\n#{content}\n]"
+    container_doc(
+      open,
+      Enum.to_list(midi),
+      close,
+      %Inspect.Opts{limit: 4},
+      fn frame, _opts -> Inspect.Midi.Frame.inspect(frame, opts) end,
+      separator: separator,
+      break: :strict
+    )
   end
 end
 
 defimpl Inspect, for: Midi.Frame do
+  import Inspect.Algebra
+
   def inspect(
         %Midi.Frame{
           type: "MThd",
@@ -23,14 +35,48 @@ defimpl Inspect, for: Midi.Frame do
             division::bits-16
           >>
         },
-        _opts
+        opts
       ) do
-    beats = decode(division)
-    "#Midi.Header{Midi format: #{format}, tracks: #{tracks}, timing: #{beats}}"
+    concat([
+      nest(
+        concat([
+          color("#Midi.Header{", :map, opts),
+          break(""),
+          "Midi format: #{format},",
+          break(" "),
+          "tracks: #{tracks},",
+          break(" "),
+          "timing: #{decode(division)}"
+        ]),
+        2
+      ),
+      break(""),
+      color("}", :map, opts)
+    ])
   end
 
-  def inspect(%Midi.Frame{type: "MTrk", length: length, data: data}, _opts) do
-    "#Midi.Track{length: #{length}, data: #{Kernel.inspect(data)}"
+  def inspect(%Midi.Frame{type: "MTrk", length: length, data: data}, opts) do
+    open = color("#Midi.Track{", :map, opts)
+    close = color("}", :map, opts)
+    separator = color(",", :map, opts)
+
+    content = [
+      length: length,
+      data: data
+    ]
+
+    container_doc(
+      open,
+      content,
+      close,
+      %Inspect.Opts{limit: 15},
+      fn {key, value}, opts ->
+        key = color("#{key}:", :atom, opts)
+        concat(key, concat(" ", to_doc(value, opts)))
+      end,
+      separator: separator,
+      break: :strict
+    )
   end
 
   defp decode(<<0::1, beats::15>>) do
@@ -39,5 +85,9 @@ defimpl Inspect, for: Midi.Frame do
 
   defp decode(<<1::1, fps::7, beats::8>>) do
     "#{-fps} fps, #{beats}/frame"
+  end
+
+  defp decode(x) do
+    raise inspect(x)
   end
 end
