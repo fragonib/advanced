@@ -41,15 +41,38 @@ defmodule CsvSigil do
     |> Enum.map(&Enum.map(&1, fn x -> parse_float(x) end))
   end
 
+  def sigil_v(lines, 'fh') do
+    [head, tail] = String.split(lines, "\n", parts: 2)
+    rest = sigil_v(tail, 'f')
+
+    _csv(head)
+    |> Enum.concat(rest)
+    |> buildRecordWithHeaders()
+  end
+
+  def sigil_v(lines, 'hf') do
+    sigil_v(lines, 'fh')
+  end
+
+  def sigil_v(lines, 'h') do
+    _csv(lines)
+    |> buildRecordWithHeaders()
+  end
+
   def sigil_v(lines, _) do
     _csv(lines)
   end
 
-  defp _csv(lines) do
-    lines
+  defp _csv(linesExprLiteral) do
+    linesExprLiteral
     |> String.trim_trailing()
     |> String.split("\n")
     |> Enum.map(&String.split(&1, ","))
+  end
+
+  defp buildRecordWithHeaders([head | tail]) do
+    headers = Enum.map(head, &String.to_atom/1)
+    tail |> Enum.map(&Enum.zip(headers, &1))
   end
 
   defp parse_float(x) do

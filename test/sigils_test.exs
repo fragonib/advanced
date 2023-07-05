@@ -76,4 +76,18 @@ defmodule SigilsTest do
                [Item: "Battery", Qty: 6, Price: 8.00]
              ]
   end
+
+  test "csv sigil with floats on headers modifiers" do
+    assert ~v"""
+           1.0,2.0,3.0
+           Teddy bear,4,34.95
+           Milk,1,2.99
+           Battery,6,8.00
+           """fh ==
+             [
+               ["1.0": "Teddy bear", "2.0": 4, "3.0": 34.95],
+               ["1.0": "Milk", "2.0": 1, "3.0": 2.99],
+               ["1.0": "Battery", "2.0": 6, "3.0": 8.00]
+             ]
+  end
 end
